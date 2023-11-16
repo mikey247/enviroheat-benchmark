@@ -8,6 +8,7 @@ public:
   ImmersionControl(int immersionRelayPin);
   void begin();
   void turnOn();
+  void turnOnFor(int timeInSeconds);
   void turnOff();
   
 

@@ -8,6 +8,7 @@ public:
   PumpControl(int pumpRelayPin);
   void begin();
   void turnOn();
+  void turnOnFor(int timeInSeconds);
   void turnOff();
 
 private:

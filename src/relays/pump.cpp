@@ -9,6 +9,11 @@ void PumpControl::begin() {
 void PumpControl::turnOn() {
   digitalWrite(pumpRelayPin, HIGH);
 }
+void PumpControl::turnOnFor(int timeInSeconds) {
+  digitalWrite(pumpRelayPin, HIGH);
+  delay((timeInSeconds*1000));
+  turnOff();
+}
 
 void PumpControl::turnOff() {
   digitalWrite(pumpRelayPin, LOW);

@@ -11,10 +11,9 @@ public:
     void drainage();
     void v40();
 
-    bool isTmaxReached() const;
-    std::string getPumpStatus() const;
-    std::string getResistanceStatus() const;
-
+    bool isTmaxReached();
+    std::string getPumpStatus();
+    std::string getResistanceStatus();
 private:
 };
 
