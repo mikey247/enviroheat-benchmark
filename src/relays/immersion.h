@@ -10,10 +10,12 @@ public:
   void turnOn();
   void turnOnFor(int timeInSeconds);
   void turnOff();
+  bool getImmersionState();
   
 
 private:
   int immersionRelayPin;
+  bool isImmersionOn; 
 };
 
 #endif

@@ -10,10 +10,7 @@ public:
     void idling();
     void drainage();
     void v40();
-
-    bool isTmaxReached();
-    std::string getPumpStatus();
-    std::string getResistanceStatus();
+    void respectTminTmax(float, bool);
 private:
 };
 
