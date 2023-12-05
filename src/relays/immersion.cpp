@@ -1,4 +1,5 @@
   #include "immersion.h"
+  #include "constants.h"
 
 ImmersionControl::ImmersionControl(int immersionRelayPin) : immersionRelayPin(immersionRelayPin),isImmersionOn(false) {
   
@@ -11,11 +12,12 @@ void ImmersionControl::begin() {
 void ImmersionControl::turnOn() {
   digitalWrite(immersionRelayPin, HIGH);
   isImmersionOn = true;
+  Serial.print(ImmersionStatusField+"ON");
   Serial.println("🔥IMMERSION IS ON");
 }
 
 void ImmersionControl::turnOnFor(int timeInSeconds){
- digitalWrite(immersionRelayPin, HIGH);
+ turnOn();
  Serial.print("🔥IMMERSION IS ON FOR "); Serial.print(timeInSeconds); Serial.print(" seconds");
  delay((timeInSeconds*1000));
  turnOff();
@@ -24,6 +26,7 @@ void ImmersionControl::turnOnFor(int timeInSeconds){
 void ImmersionControl::turnOff() {
   digitalWrite(immersionRelayPin, LOW);
   isImmersionOn = false;
+  Serial.print(ImmersionStatusField+"OFF");
   Serial.println("❌IMMERSION IS OFF");
 }
 

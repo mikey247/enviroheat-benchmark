@@ -12,13 +12,23 @@
 // TX from the node goes on the screen RX
 // RX from the node goes on the screen TX
 
+
+// cfgpio 0,2,0
+// cfgpio 1,0,0
+// cfgpio 2,2,0
+// cfgpio 3,0,0
+// cfgpio 4,0,0
+// cfgpio 5,0,0
+// cfgpio 6,0,0
+// cfgpio 7,0,0 
 // put function declarations here:
 
 const int IMMERSION_RELAY_PIN = D1;
 const int PUMP_RELAY_PIN = D2;
 const int DS18B20_PIN = D3;
 const int BUZZER_PIN = D7;
-
+// d4 valve
+const int VALVE_CONTROL_PIN = D4;
 // #define PUMP_RELAY_PIN D2
 // #define DS18B20_PIN D3
 
@@ -32,12 +42,13 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(IMMERSION_RELAY_PIN, OUTPUT);
   pinMode(PUMP_RELAY_PIN, OUTPUT);
+  // pinMode(VALVE_CONTROL_PIN, OUTPUT);
 
   Serial.begin(9600);
 
   systemTest.warmUp();
   buzzer.turnOn();
-  delay(1000);
+  delay(1000);                                                                                        
   buzzer.turnOff();
 
   systemTest.idling();
@@ -45,15 +56,15 @@ void setup() {
   delay(1000);
   buzzer.turnOff();
 
-  // systemTest.drainage();
-  // buzzer.turnOn();
-  // delay(1000);
-  // buzzer.turnOff();
+  systemTest.drainage();
+  buzzer.turnOn();
+  delay(1000);
+  buzzer.turnOff();
   
-  // systemTest.v40();
-  // buzzer.turnOn();
-  // delay(1000);
-  // buzzer.turnOff();
+  systemTest.v40();
+  buzzer.turnOn();
+  delay(1000);
+  buzzer.turnOff();
   
   // temperatureSensor.begin();// Initialize the temperature sensor
   // pumpControl.begin(); // Initialize the pump control relay

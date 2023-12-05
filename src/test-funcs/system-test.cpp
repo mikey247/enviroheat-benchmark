@@ -4,6 +4,7 @@
 #include "temperature/temperature.h"
 #include "relays/pump.h"
 #include "relays/immersion.h"
+#include "valves.h"
 
 SystemTest::SystemTest() {
 
@@ -12,7 +13,7 @@ SystemTest::SystemTest() {
 TemperatureSensor temperatureSensor(DS18B20_PIN);
 PumpControl pumpControl(PUMP_RELAY_PIN);
 ImmersionControl immersionControl(IMMERSION_RELAY_PIN);
-
+ValveControl valveControl(VALVE_CONTROL_PIN);
 
 
 void runCycle(int durationMinutes, std::function<void()> action) {
@@ -30,7 +31,7 @@ void runCycle(int durationMinutes, std::function<void()> action) {
         times++;
         // Update elapsed time
         elapsedSeconds = difftime(std::time(0), startTime);
-        Serial.println("THis cycle has run---- ");
+        Serial.print("This cycle has run---- ");
         Serial.println(times);
     }
 }
@@ -42,8 +43,7 @@ void SystemTest::warmUp() {
     // Implementation for warm-up stage
     // i.e turning on the resistance until TMAX is reached
     float temperature = temperatureSensor.readTemperature();
-    // float temperature = 35.34;
-    Serial.println("Temp is : ");
+    Serial.print("Temperature is : ");
     Serial.println( temperature);
 
     if (!immersionControl.getImmersionState()){
@@ -53,10 +53,9 @@ void SystemTest::warmUp() {
         
     while (temperature < TMAX) {
         temperature = temperatureSensor.readTemperature();
-        // temperature+=10;
-        Serial.println("Temp is now : ");
+        Serial.print("Temperature is now : ");
         Serial.println(temperature);
-        delay(10000);  // Delay for 30 seconds
+        delay(2000);  // Delay for 2 seconds
     }
 
     Serial.println("Warm up complete");
@@ -81,7 +80,7 @@ void SystemTest::idling() {
 
         // pumpControl.turnOff(); //turn pump off
         this->respectTminTmax(temperature, false);
-        delay(60000);  // Delay for 60 seconds
+        delay(40000);  // Delay for 40 seconds
         Serial.println("Pump is off for 60 seconds");
         Serial.println("The temperature is----");
         Serial.println(temperature);
@@ -99,7 +98,7 @@ void SystemTest::idling() {
             pumpControl.turnOff();
             Serial.println("Pump and Heat are OFF!!!");
         }
-        delay(10000);
+        delay(5000);
     });
 
     // // C) - From 11:35 a.m. to 12:05 p.m.:
@@ -115,7 +114,7 @@ void SystemTest::idling() {
             pumpControl.turnOn();
         }
         Serial.println("Pump and Heat are ON!!!");
-        delay(10000);
+        delay(5000);
         Serial.print("Pump and Heat are: "); Serial.print(pumpControl.getPumpStatus()?"ON":"OFF"); 
         Serial.print(" "); Serial.println(immersionControl.getImmersionState() ?"ON":"OFF");
     });
@@ -125,6 +124,7 @@ void SystemTest::drainage() {
         Serial.println("DRAINAGE!!!!");
 
 //     A) - From 12:00 a.m. to 3:30:34 p.m.:
+    // valves open
 //      - R = ON (R respects the TMIN and TMAX thresholds)
 //      - P = ON if R is OFF while respecting the PON and POFF thresholds.
 //      - P = OFF if R = ON
@@ -132,10 +132,13 @@ void SystemTest::drainage() {
             Serial.println("DRAINAGE_CYCLE_A");
             Serial.print("Pump and Heat are: "); Serial.print(pumpControl.getPumpStatus() ? "ON" : "OFF"); 
             Serial.print(" "); Serial.println(immersionControl.getImmersionState() ? "ON" : "OFF");
-
+           // Turn on valves
+            if(!valveControl.getValveStatus()){
+              valveControl.turnOn();
+            }
             float temperature = temperatureSensor.readTemperature();
             this->respectTminTmax(temperature, true);
-            delay(10000);
+            delay(3000);
     });
 //     B) - From 3:30:34 p.m. to 12 p.m.:
 //        - blocked valves
@@ -145,13 +148,16 @@ void SystemTest::drainage() {
         Serial.println("DRAINAGE_CYCLE_B");
         Serial.print("Pump and Heat are: "); Serial.print(pumpControl.getPumpStatus()?"ON":"OFF"); 
         Serial.print(" "); Serial.println(immersionControl.getImmersionState() ? "ON" : "OFF");
-
+        // Turn valves off if on
+        if(valveControl.getValveStatus()){
+            valveControl.turnOff();
+        }
         if(pumpControl.getPumpStatus()){
         pumpControl.turnOff();
         }
         float temperature = temperatureSensor.readTemperature();
         this->respectTminTmax(temperature, false);  
-        delay(10000);
+        delay(3000);
     });
 }
 
@@ -170,7 +176,7 @@ runCycle(V40_CYCLE_A, [this](){
     }
     float temperature = temperatureSensor.readTemperature();
     this->respectTminTmax(temperature, false);  
-    delay(10000);
+    delay(2000);
 });
 
 // B) - From 11:35 a.m. to 12:05 p.m.:
@@ -193,8 +199,11 @@ runCycle(V40_CYCLE_B, [](){
     pumpControl.turnOff();
     immersionControl.turnOff();
 
-    // TODO: turn on valves
-    Serial.println("Valves turn on!!");
+    // turn on valves
+    if(valveControl.getValveStatus()){
+     valveControl.turnOn();
+     Serial.println("Valves turn on!!");
+    }
     delay(10000);
     // delay(1800000);// delay another 30 minutes
     //TODO :System switches off

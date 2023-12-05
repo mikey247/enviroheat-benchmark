@@ -158,7 +158,7 @@
 //   }
 
 //   // Print ESP8266 Local IP Address
-//   Serial.println(WiFi.localIP());
+//   intln(WiFi.localIP());
 
 //   // Route for root / web page
 //   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){

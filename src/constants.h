@@ -6,6 +6,8 @@
 const int IMMERSION_RELAY_PIN = D1;
 const int PUMP_RELAY_PIN = D2;
 const int DS18B20_PIN = D3;
+const int VALVE_CONTROL_PIN = D4;
+
 // THRESHOLDS
 const float TMAX = 65.22;  
 const float TMIN = 56.2; 
@@ -32,5 +34,10 @@ const int DRAINAGE_CYCLE_B = 5;
 
 const int V40_CYCLE_A = 9 ;
 const int V40_CYCLE_B = 2;
+
+//NEXTION FIELDS
+const String TemperatureField = "tempField.txt=";
+const String PumpStatusField = "pumpStatus.txt=";
+const String ImmersionStatusField = "heatStatus.txt=";
 
 #endif 
